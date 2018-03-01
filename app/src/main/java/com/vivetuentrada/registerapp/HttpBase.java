@@ -9,8 +9,8 @@ import okhttp3.OkHttpClient;
 public class HttpBase {
 
 
-    private  String GATEWAY_URL = "http://192.168.0.100:8888/";
-    protected String SERVICE_PREFIX = null;
+    private  String GATEWAY_URL = "http://192.168.0.8:8080/";
+    protected String SERVICE_PREFIX = "auth/";
     protected String ROOT = null;
 
     OkHttpClient http = new OkHttpClient();
@@ -25,6 +25,16 @@ public class HttpBase {
         }
 
     }
+
+    protected String getUrlFor () {
+        if (SERVICE_PREFIX == null){
+            return  GATEWAY_URL + ROOT;
+        }else{
+            return GATEWAY_URL + SERVICE_PREFIX+ ROOT;
+        }
+
+    }
+
 
 
     protected void updateMicroservicePrefix (String prefix){

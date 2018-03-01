@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import com.vivetuentrada.registerapp.ServerResponse.Error;
 
@@ -137,7 +136,7 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
         protected ServerResponse doInBackground(Void... strings) {
             try {
                 Response resp = this.rService.validateTicket(codeBar);
-                ServerResponse <List <Ts>> response = null;
+                ServerResponse <List <UserAuth>> response = null;
                 Log.d("response",resp.toString());
                 if (resp.code() == 200){
                      ServerResponse<Object> serverResp = new ServerResponse<Object>(resp.body().charStream());

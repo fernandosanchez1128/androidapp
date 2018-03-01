@@ -1,7 +1,6 @@
 package com.vivetuentrada.registerapp;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,18 +8,16 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.BeepManager;
-import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.Response;
@@ -38,7 +35,8 @@ public class ContinuousCaptureActivity extends Activity {
     private CaptureManager capture;
     private BeepManager beepManager;
     private String lastText;
-    private RegisterActivity.ValidateTicketTask tValidateTask = null;
+    private ContinuousCaptureActivity.ValidateTicketTask tValidateTask = null;
+    public TextView formatTxt, contentTxt;
 
 
     private BarcodeCallback callback = new BarcodeCallback() {
@@ -48,6 +46,9 @@ public class ContinuousCaptureActivity extends Activity {
                 // Prevent duplicate scans
                 return;
             }
+            if (tValidateTask != null){
+                return ;
+            }
 
             lastText = result.getText();
             //barcodeView.setStatusText(result.getText());
@@ -56,6 +57,8 @@ public class ContinuousCaptureActivity extends Activity {
             //Added preview of scanned barcode
             ImageView imageView = (ImageView) findViewById(R.id.barcodePreview);
             imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
+            tValidateTask = new ValidateTicketTask(lastText);
+            tValidateTask.execute((Void) null);
         }
 
         @Override
@@ -66,18 +69,13 @@ public class ContinuousCaptureActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.continuous_scan);
+        formatTxt = (TextView) findViewById(R.id.scan_format);
+        contentTxt = (TextView) findViewById(R.id.scan_content);
 
         barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcode_scanner);
         barcodeView.initializeFromIntent(getIntent());
         barcodeView.decodeContinuous(callback);
-//u        capture = new CaptureManager(this, barcodeView);
-
-        //capture.initializeFromIntent(getIntent(), savedInstanceState);
-        //capture.decode();
-        //barcodeView.get
-
 
         beepManager = new BeepManager(this);
     }
@@ -129,7 +127,7 @@ public class ContinuousCaptureActivity extends Activity {
         protected ServerResponse doInBackground(Void... strings) {
             try {
                 Response resp = this.rService.validateTicket(codeBar);
-                ServerResponse <List <Ts>> response = null;
+                ServerResponse <List <UserAuth>> response = null;
                 Log.d("response",resp.toString());
                 if (resp.code() == 200){
                     ServerResponse<Object> serverResp = new ServerResponse<Object>(resp.body().charStream());
@@ -140,8 +138,6 @@ public class ContinuousCaptureActivity extends Activity {
 
 
             } catch (IOException e) {
-                e.printStackTrace();
-                Log.d("error",e.getMessage());
                 return null;
             }
         }
@@ -149,12 +145,15 @@ public class ContinuousCaptureActivity extends Activity {
 
         protected void onPostExecute(final ServerResponse resp) {
             tValidateTask = null;
+            System.out.println(formatTxt);
+            System.out.println(contentTxt);
+
             if (resp.hasError()){
                 ServerResponse.Error firstError = (ServerResponse.Error) resp.getErrorsList().get(0);
-                //formatTxt.setText(firstError.getTitle());
-                //contentTxt.setText(firstError.getMessage());
+                formatTxt.setText(firstError.getTitle());
+                contentTxt.setText(firstError.getMessage());
             }else{
-                //contentTxt.setText("success");
+                contentTxt.setText("success");
 
             }
         }
