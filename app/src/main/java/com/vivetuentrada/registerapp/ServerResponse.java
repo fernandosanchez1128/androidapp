@@ -29,7 +29,8 @@ public class ServerResponse <T> {
         private  String code;
         private  String message;
 
-        public Error (String title, String message ){
+        public Error (String code, String title, String message ){
+            this.code = code;
             this.title = title;
             this.message = message;
         }
@@ -92,8 +93,12 @@ public class ServerResponse <T> {
         this.listErrors.clear();
         final Gson gson = new Gson();
         ServerResponse<T> clone = new ServerResponse<T>();
-        clone = gson.fromJson(response, new TypeToken<ServerResponse>(){}.getType());
-        this.data = clone.getData();
+        clone = gson.fromJson(response, new TypeToken<ServerResponse<T>>(){}.getType());
+
+
+        this.data = clone.data;
+
+
         this.errors = clone.getErrors();
         this.success = clone.isSuccess();
         this.status = clone.getStatus();
@@ -112,12 +117,10 @@ public class ServerResponse <T> {
 
 
     public List<Error> errorsToArray (){
-        Log.d("error", "in error");
         for (Map.Entry<String, Map> entry : this.errors.entrySet()){
-            int d = Log.d("test",entry.getKey());
             Map value = entry.getValue();
             this.listErrors.add(new Error
-                    ((String)value.get("title"),(String)value.get("message")));
+                    (entry.getKey(), (String)value.get("title"),(String)value.get("message")));
         }
 
         return this.listErrors;

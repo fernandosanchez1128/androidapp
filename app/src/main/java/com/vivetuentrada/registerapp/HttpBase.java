@@ -1,12 +1,17 @@
 package com.vivetuentrada.registerapp;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+
 import okhttp3.OkHttpClient;
 
 /**
  * Created by usuario on 23/02/2018.
  */
 
-public class HttpBase {
+public class HttpBase  extends Service{
 
 
     private  String GATEWAY_URL = "http://192.168.0.8:8080/";
@@ -41,4 +46,9 @@ public class HttpBase {
         this.SERVICE_PREFIX = prefix;
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 }

@@ -3,6 +3,7 @@ package com.vivetuentrada.registerapp;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -20,10 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.List;
 import com.vivetuentrada.registerapp.ServerResponse.Error;
 
 import okhttp3.Response;
+
+import static com.vivetuentrada.registerapp.ContinuousCaptureActivity.*;
 
 
 /**
@@ -34,20 +40,22 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private String CODE_FORMAT = "CODE_128";
-    private ValidateTicketTask tValidateTask = null;
+    private ValidateInputTicketTask tValidateTask = null;
     private Button scanBtn;
-    public TextView formatTxt, contentTxt;
+    private TextView formatTxt, contentTxt;
+    private SessionStorageService _session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("MyApp", "I am here");
         super.onCreate(savedInstanceState);
+        _session =  SessionStorageService.getInstance(getBaseContext());
         setContentView(R.layout.register_activity);
         scanBtn = (Button) findViewById(R.id.scan_button);
         formatTxt = (TextView) findViewById(R.id.scan_format);
         contentTxt = (TextView) findViewById(R.id.scan_content);
         this.requestPermissions();
         scanBtn.setOnClickListener(this);
+        Log.d("access_token", _session.getAtribute(_session.ACCESS_TOKEN));
     }
 
     /**
@@ -63,35 +71,12 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
             Intent intent = new Intent(this, ContinuousCaptureActivity.class);
             intent.putExtra("SCAN_FORMATS", CODE_FORMAT);
             startActivity(intent);
-            //startActivity(intent);
-            //IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-
-            //scanIntegrator.initiateScan(Arrays.asList(new String[]{CODE_FORMAT}));
-            //scanIntegrator.
-
-            //tValidateTask = new ValidateTicketTask("1243");
-            //tValidateTask.execute((Void) null);
 
         }
     }
 
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        if (scanningResult != null) {
-            String scanFormat = scanningResult.getFormatName();
-            String scanContent = scanningResult.getContents();
-            formatTxt.setText("FORMAT: " + scanFormat);
-            contentTxt.setText("CONTENT: " + scanContent);
-            formatTxt.setText(scanContent);
-            tValidateTask = new ValidateTicketTask(scanContent);
-            tValidateTask.execute((Void) null);
-        } else {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "No scan data received!", Toast.LENGTH_SHORT);
-            toast.show();
-        }
-    }
+
 
 
     public void requestPermissions() {
@@ -124,56 +109,68 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class ValidateTicketTask extends AsyncTask<Void, Void, ServerResponse> {
+    public class ValidateInputTicketTask extends AsyncTask<Void, Void, Integer>  {
         private String codeBar;
         private RegisterService rService = new RegisterService();
+        ServerResponse<RegisterStatus> serverResp;
 
-        ValidateTicketTask(String codeBar) {
+        ValidateInputTicketTask(String codeBar) {
             this.codeBar = codeBar;
         }
 
         @Override
-        protected ServerResponse doInBackground(Void... strings) {
+        protected Integer doInBackground(Void... strings) {
             try {
                 Response resp = this.rService.validateTicket(codeBar);
-                ServerResponse <List <UserAuth>> response = null;
                 Log.d("response",resp.toString());
-                if (resp.code() == 200){
-                     ServerResponse<Object> serverResp = new ServerResponse<Object>(resp.body().charStream());
-                     return serverResp;
+                int code = resp.code();
+                if (code  == 200){
+                    serverResp = new ServerResponse<RegisterStatus>(resp.body().charStream());
                 }else{
-                    return null;
+                    if (code >=400  && code <=403){
+                        _session.logout();
+                        Intent loginActivity = new Intent(RegisterActivity.this,LoginActivity.class);
+                        startActivity(loginActivity);
+                    }
                 }
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d("error",e.getMessage());
-                return null;
+                return resp.code();
+            }
+            catch (ConnectException e){
+                return 512;
+            }
+            catch (Exception e) {
+                return 500;
             }
         }
 
 
-        protected void onPostExecute(final ServerResponse resp) {
+        protected void onPostExecute(final Integer resp) {
             tValidateTask = null;
-            if (resp.hasError()){
-                Error firstError = (Error) resp.getErrorsList().get(0);
-                //formatTxt.setText(firstError.getTitle());
-                contentTxt.setText(firstError.getMessage());
-            }else{
-                contentTxt.setText("success");
+            formatTxt.setText(codeBar);
+            if (resp == 200) {
 
+                if (serverResp.hasError()) {
+                    ServerResponse.Error firstError = (ServerResponse.Error) serverResp.getErrorsList().get(0);
+                    contentTxt.setText(MessagesHelper.RegisterErrors(firstError.getCode(), getBaseContext()));
+                } else {
+                    contentTxt.setTextColor(Color.BLUE);
+
+                    Gson convert = new Gson();
+                    String strResponse= convert.toJson(serverResp.getData());
+                    RegisterStatus status = convert.fromJson(strResponse,  new TypeToken<RegisterStatus>(){}.getType());
+                    String str_status = status.getStatus();
+                    if (str_status.equals("accept")){
+                        contentTxt.setTextColor(Color.GREEN);
+                    }
+                    if (str_status.equals("reject") ){
+                        contentTxt.setTextColor(Color.RED);
+                    }
+                    contentTxt.setText(MessagesHelper.RegisterMessages(status.getStatus(),getBaseContext()));
+                }
+            } else {
+                contentTxt.setText(MessagesHelper.HttpErrorsMessage(resp, getBaseContext()));
             }
-
-
-            //System.out.println(response.getData().get(1).getTicketSale());
-
-
-
         }
-
-
-
         @Override
         protected void onCancelled() {
             tValidateTask = null;

@@ -7,6 +7,7 @@ public class UserAuth {
     private String id;
     private String user;
     private String email;
+    private String access_token;
 
     public UserAuth() {
     }
@@ -49,5 +50,13 @@ public class UserAuth {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
     }
 }

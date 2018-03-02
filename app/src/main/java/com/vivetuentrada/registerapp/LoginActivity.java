@@ -4,29 +4,26 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Response;
 
@@ -36,14 +33,10 @@ import okhttp3.Response;
  */
 public class LoginActivity extends AppCompatActivity {
 
-
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
+     * Store user login data
      */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world", "fernando:f1128"
-    };
+    private SessionStorageService _session ;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -60,6 +53,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        _session =  SessionStorageService.getInstance(getBaseContext());
+        if (_session.isAuth()){
+            Intent registerActivity = new Intent(LoginActivity.this,RegisterActivity.class);
+            startActivity(registerActivity);
+        }
+
         // Set up the login form.
         mUsernameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -75,9 +74,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
+
+        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        mSignInButton.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 attemptLogin();
             }
@@ -148,7 +147,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -198,10 +196,9 @@ public class LoginActivity extends AppCompatActivity {
 
         private final String username;
         private final String password;
-        private ServerResponse response;
+        private UserAuth response;
         private AuthService authService = new AuthService();
-        private String SERVER_ERROR = "server.error.500";
-        private String AUTH_ERROR = "server.error.";
+
 
         UserLoginTask(String username, String password) {
             this.username = username;
@@ -213,13 +210,14 @@ public class LoginActivity extends AppCompatActivity {
             // TODO: attempt authentication against a network service.
             try {
                 Response resp = this.authService.login(this.username,this.password);
-                ServerResponse <List <UserAuth>> response = null;
                 Log.d("response",resp.toString());
 
                 if (resp.code() == 200){
-                    ServerResponse<UserAuth> serverResp = new ServerResponse<UserAuth>(resp.body().charStream());
-                    this.response = serverResp;
-
+                    final Gson gson = new Gson();
+                    this.response = gson.fromJson(resp.body().charStream(), new TypeToken<UserAuth>(){}.getType());
+                    Log.d("resp",response.getEmail());
+                    _session.storeAuthData(this.response);
+                    Log.d("resp",_session.getAtribute(_session.ACCESS_TOKEN));
                 }
 
                 return resp.code();
@@ -239,34 +237,14 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (response != 200) {
-                //merrorText.setTextColor(Color.RED);
-                merrorText.setText(getErrorMessage (response));
-
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "No scan data received!", Toast.LENGTH_LONG);
-                toast.show();
+                merrorText.setText(MessagesHelper.HttpErrorsMessage (response,getBaseContext()));
 
             }else{
+                //Log.d("response", this.response.getData().getEmail());
                 Intent registerActivity = new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(registerActivity);
             }
 
-        }
-
-        public String getErrorMessage (int code) {
-            String error = null;
-            switch (code) {
-                case 500 :
-                    error = getString(R.string.server_error);
-                    break;
-                case 400 :
-                    error = getString(R.string.server_auth_error_bad_password);
-                    break;
-                case 401 :
-                    error = getString(R.string.server_auth_error_bad_user);
-                    break;
-            }
-            return error;
         }
 
 
