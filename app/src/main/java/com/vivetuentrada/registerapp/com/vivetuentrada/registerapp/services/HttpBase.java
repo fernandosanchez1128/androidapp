@@ -1,4 +1,4 @@
-package com.vivetuentrada.registerapp;
+package com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services;
 
 import android.app.Service;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import okhttp3.OkHttpClient;
 public class HttpBase  extends Service{
 
 
-    private  String GATEWAY_URL = "http://192.168.0.8:8080/";
+    private  String GATEWAY_URL = "http://54.208.131.209/";
     protected String SERVICE_PREFIX = "auth/";
     protected String ROOT = null;
 

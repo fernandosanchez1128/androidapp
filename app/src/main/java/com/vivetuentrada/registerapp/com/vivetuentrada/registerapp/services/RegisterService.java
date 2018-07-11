@@ -1,8 +1,10 @@
-package com.vivetuentrada.registerapp;
+package com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services;
+
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services.HttpBase;
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services.SessionStorageService;
 
 import java.io.IOException;
 
-import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -25,7 +27,7 @@ public class RegisterService extends HttpBase {
     public Response validateTicket (String codeBar) throws IOException {
         Request request = new Request.Builder()
                 //.url(this.getUrlFor( codeBar))
-                .url(this.getUrlFor( "00000001000002370019573"))
+                .url(this.getUrlFor( codeBar))
                 .header("Authorization", "Bearer "+ _session.getAtribute(_session.ACCESS_TOKEN))
                 .build();
         return http.newCall(request).execute();

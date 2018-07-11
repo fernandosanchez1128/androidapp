@@ -1,81 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.vivetuentrada.registerapp.ContinuousCaptureActivity">
 
-    <com.journeyapps.barcodescanner.DecoratedBarcodeView
-        android:id="@+id/barcode_scanner"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@+id/buttonsLayout2"
-        android:layout_alignParentTop="true">
-
-    </com.journeyapps.barcodescanner.DecoratedBarcodeView>
-
-    <LinearLayout
-        android:id="@+id/buttonsLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_above="@+id/buttonsLayout"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/scan_format"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="TextView"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/scan_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="TextView"
-            android:textColor="#FF0000"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:orientation="vertical"
+    <ProgressBar
+        android:id="@+id/register_progress"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/buttonsLayout"
-        android:layout_toLeftOf="@+id/centerHorizont">
+        android:visibility="gone" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pause"
-            android:onClick="pause" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Resume"
-            android:onClick="resume" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="0dp"
+    <RelativeLayout
+        android:id="@+id/scan_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/centerHorizont" />
+        android:visibility="visible">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/centerHorizont"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/buttonsLayout"
-        android:id="@+id/barcodePreview" />
+        <ImageView
+            android:id="@+id/barcodePreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/buttonsLayout"
+            android:layout_toRightOf="@id/centerHorizont" />
+
+        <LinearLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/centerHorizont"
+            android:orientation="vertical">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="pause"
+                android:text="Pause" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="resume"
+                android:text="Resume" />
+        </LinearLayout>
+
+        <com.journeyapps.barcodescanner.DecoratedBarcodeView
+            android:id="@+id/barcode_scanner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_above="@+id/buttonsLayout2"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal">
+
+        </com.journeyapps.barcodescanner.DecoratedBarcodeView>
+
+        <View
+            android:id="@+id/centerHorizont"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true" />
+
+        <LinearLayout
+            android:id="@+id/buttonsLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_above="@+id/buttonsLayout"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/code_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/response"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical|center_horizontal"
+                android:textColor="#FF0000"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
 
 </RelativeLayout>

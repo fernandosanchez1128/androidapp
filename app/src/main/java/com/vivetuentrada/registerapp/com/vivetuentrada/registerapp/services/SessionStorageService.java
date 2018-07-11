@@ -1,6 +1,5 @@
-package com.vivetuentrada.registerapp;
+package com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.models.UserAuth;
 
 /**
  * Created by desarrollo on 2/03/18.
@@ -56,6 +57,10 @@ public class SessionStorageService extends Service{
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(ACCESS_TOKEN, user.getAccess_token());
+        editor.putString(USER, user.getUser());
+        editor.putString(IDENTIFICATION, user.getIdentification());
+        editor.putString(ID, user.getId());
+        editor.putString(EMAIL, user.getEmail());
         editor.commit();
 
     }

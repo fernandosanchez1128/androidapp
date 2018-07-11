@@ -1,9 +1,6 @@
-package com.vivetuentrada.registerapp;
-
-import android.util.Log;
+package com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.Reader;
@@ -24,7 +21,7 @@ public class ServerResponse <T> {
     private Map <String,Map> errors;
     private List<Error> listErrors = new ArrayList<Error>();
 
-    class Error {
+    public class Error {
         private String title;
         private  String code;
         private  String message;

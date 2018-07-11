@@ -4,39 +4,51 @@
     <!-- Strings related to login -->
     <string name="prompt_password">Contraseña</string>
     <string name="action_sign_in">Entrar</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">la contraseña es muy corta</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">el campo es requerido</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="error_invalid_email">El correo es incorrecto</string>
+    <string name="error_invalid_password">La contraseña es muy corta</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta</string>
+    <string name="error_field_required">El campo es requerido</string>
+    <string name="error_code_input_repeated">Por favor ingrese un nuevo código</string>
+    <string name="error_code_repeated">Se ha detectado el mismo codigo.Por favor use otro boleto</string>
 
-    <string name="scan">Scan</string>
     <string name="prompt_username">Nombre de usuario</string>
-    <string name="server.error">Error Desconocido. Intente de nuevo</string>
-    <string name="server.auth.error.bad_password">Contraseña Incorrecta</string>
+
+
+    <string name="register_code_bar">Código de barras</string>
+    <string name="register_registry_code">Registrar código</string>
+    <string name="register_scan">Iniciar scaneo</string>
+    <string name="register_welcome">Bienvenido</string>
+    <string name="register_info">Si tiene un lector de codigos de barras conectado al celular por favor
+    ubiquese el en campo "Código de barras" y empieze a escanear, de lo contrario presione el boton iniciar escaneo
+    para capturar los códigos con la camara del celular</string>
+
+
+    <!-- Strings de errores http-->
+    <string name="server.error">Error desconocido. Intente de nuevo</string>
+    <string name="server.auth.error.bad_password">Contraseña incorrecta</string>
     <string name="server.auth.error.bad_user">El usuario ingresado no existe o esta bloqueado</string>
     <string name="server.auth.error.not_found">Recurso no encontrado</string>
-    <string name="server.auth.error.connect">No se pudó conectar al recurso. Valide su conecion a internet</string>
+    <string name="server.auth.error.connect">No se pudó conectar al recurso. Valide su conexión a internet</string>
 
+    <!-- Strings de errores en registro de entrada-->
     <string name="server.register.error.badformat"> El código no cumple el formato esperado</string>
-    <string name="server.register.error.ticketbadformat"> La información contenida en el tickete no es la esperada</string>
+    <string name="server.register.error.ticketbadformat"> La información contenida en el boleto no es la esperada</string>
     <string name="server.register.error.empty">El código no puede estar vacio! </string>
     <string name="server.register.error.longcode">El código es demasiado largo</string>
     <string name="server.register.error.shortcode">El código es demasiado corto</string>
     <string name="server.register.error.unknown">El código no es valido para el evento</string>
     <string name="server.register.error.format.dcshow">El show no cumple el tipo esperado</string>
-    <string name="server.register.error.format.dctransaction">La Transacción no cumple el tipo esperado</string>
+    <string name="server.register.error.format.dctransaction">La transacción no cumple el tipo esperado</string>
     <string name="server.register.error.format.dccheckdigit">El digito verificación no cumple el tipo esperado</string>
     <string name="server.register.error.format.dccounter">El contador  no cumple el tipo esperado</string>
 
-    <string name="server.register.messages.badinfo">La Información contenida en el código es incorrecta</string>
-    <string name="server.register.messages.accept">Correcto ticket registrado</string>
-    <string name="server.register.messages.defeated">El Tickete ha vencido</string>
-    <string name="server.register.messages.at">La entrada al evento todavia no esta activada</string>
-    <string name="server.register.messages.consumed">El ticket ya ha sido usado</string>
-
-
+    <!-- Strings de mensajes para registro de entrada-->
+    <string name="server.register.messages.badinfo">La información contenida en el código es incorrecta</string>
+    <string name="server.register.messages.accept">Correcto boleto registrado</string>
+    <string name="server.register.messages.defeated">El boleto ha vencido. La fecha del evento fue entre %1s y %2s</string>
+    <string name="server.register.messages.at">La entrada al evento es para el %1s - %2s  </string>
+    <string name="server.register.messages.consumed">El boleto ya ha sido usado. Fecha de entrada %1s</string>
+    <string name="server.register.messages.nopayed">Boleto no pagado!!. Lote %1s</string>
 </resources>
 

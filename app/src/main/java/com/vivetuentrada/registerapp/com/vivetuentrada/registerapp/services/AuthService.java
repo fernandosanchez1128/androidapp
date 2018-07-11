@@ -1,4 +1,8 @@
-package com.vivetuentrada.registerapp;
+package com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services;
+
+import android.util.Base64;
+
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services.HttpBase;
 
 import java.io.IOException;
 
@@ -17,6 +21,8 @@ public class AuthService extends HttpBase {
     private String ROOT = "oauth/token";
     private String CLIENT_ID = "vive_register_app";
     private String CLIENT_SECRET = "^9QW%riJ7[";
+    private SessionStorageService _session = SessionStorageService.getInstance(null);
+
     public AuthService (){
 
         super();
@@ -37,6 +43,18 @@ public class AuthService extends HttpBase {
                 .post(formBody)
                 .build();
         return http.newCall(request).execute();
+    }
+
+    public Response logout () throws IOException {
+        Request request = new Request.Builder()
+                //.url(this.getUrlFor( codeBar))
+                .delete()
+                .url(this.getUrlFor( ))
+                .header("Authorization", "Basic "+
+                        Base64.encodeToString((CLIENT_ID+":"+CLIENT_SECRET).getBytes(), Base64.NO_WRAP))
+                .build();
+        return http.newCall(request).execute();
+
     }
 
 }

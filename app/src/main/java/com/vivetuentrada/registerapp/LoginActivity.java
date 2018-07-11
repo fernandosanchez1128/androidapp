@@ -22,6 +22,10 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.models.UserAuth;
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services.AuthService;
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services.SessionStorageService;
+import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.utils.MessagesHelper;
 
 import java.io.IOException;
 
@@ -51,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("login","creating loggin");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         _session =  SessionStorageService.getInstance(getBaseContext());
@@ -84,6 +89,15 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (_session.isAuth()){
+            Intent registerActivity = new Intent(LoginActivity.this,RegisterActivity.class);
+            startActivity(registerActivity);
+        }
     }
 
 
@@ -210,12 +224,11 @@ public class LoginActivity extends AppCompatActivity {
             // TODO: attempt authentication against a network service.
             try {
                 Response resp = this.authService.login(this.username,this.password);
-                Log.d("response",resp.toString());
-
                 if (resp.code() == 200){
                     final Gson gson = new Gson();
                     this.response = gson.fromJson(resp.body().charStream(), new TypeToken<UserAuth>(){}.getType());
                     Log.d("resp",response.getEmail());
+                    Log.e("resp",Integer.toString(response.getExpires_in()));
                     _session.storeAuthData(this.response);
                     Log.d("resp",_session.getAtribute(_session.ACCESS_TOKEN));
                 }
@@ -243,6 +256,7 @@ public class LoginActivity extends AppCompatActivity {
                 //Log.d("response", this.response.getData().getEmail());
                 Intent registerActivity = new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(registerActivity);
+
             }
 
         }

@@ -1,8 +1,8 @@
-package com.vivetuentrada.registerapp;
+package com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.models;
 
 public class UserAuth {
 
-    private int expiresIn;
+    private int expires_in;
     private String identification;
     private String id;
     private String user;
@@ -12,12 +12,12 @@ public class UserAuth {
     public UserAuth() {
     }
 
-    public int getExpiresIn() {
-        return expiresIn;
+    public int getExpires_in() {
+        return expires_in;
     }
 
-    public void setExpiresIn(int expiresIn) {
-        this.expiresIn = expiresIn;
+    public void setExpires_in(int expires_in) {
+        this.expires_in = expires_in;
     }
 
     public String getIdentification() {
