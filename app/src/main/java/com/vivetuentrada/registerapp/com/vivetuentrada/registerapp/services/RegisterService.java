@@ -1,8 +1,5 @@
 package com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services;
 
-import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services.HttpBase;
-import com.vivetuentrada.registerapp.com.vivetuentrada.registerapp.services.SessionStorageService;
-
 import java.io.IOException;
 
 import okhttp3.Request;

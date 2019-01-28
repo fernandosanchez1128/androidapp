@@ -224,6 +224,7 @@ public class LoginActivity extends AppCompatActivity {
             // TODO: attempt authentication against a network service.
             try {
                 Response resp = this.authService.login(this.username,this.password);
+                Log.d("resp",resp.toString());
                 if (resp.code() == 200){
                     final Gson gson = new Gson();
                     this.response = gson.fromJson(resp.body().charStream(), new TypeToken<UserAuth>(){}.getType());

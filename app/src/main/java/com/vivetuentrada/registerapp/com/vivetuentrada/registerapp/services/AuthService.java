@@ -21,6 +21,7 @@ public class AuthService extends HttpBase {
     private String ROOT = "oauth/token";
     private String CLIENT_ID = "vive_register_app";
     private String CLIENT_SECRET = "^9QW%riJ7[";
+    private String AUTH_HEADER = "Authorization";
     private SessionStorageService _session = SessionStorageService.getInstance(null);
 
     public AuthService (){
@@ -35,11 +36,10 @@ public class AuthService extends HttpBase {
         RequestBody formBody = new FormBody.Builder()
                 .add("username", username)
                 .add("password", password)
-                .add("client_id", CLIENT_ID)
-                .add("client_secret", CLIENT_SECRET)
                 .build();
         Request request = new Request.Builder()
                 .url(this.getUrlFor())
+                .header(AUTH_HEADER,getEncodeBasicCredentials())
                 .post(formBody)
                 .build();
         return http.newCall(request).execute();
@@ -50,11 +50,14 @@ public class AuthService extends HttpBase {
                 //.url(this.getUrlFor( codeBar))
                 .delete()
                 .url(this.getUrlFor( ))
-                .header("Authorization", "Basic "+
-                        Base64.encodeToString((CLIENT_ID+":"+CLIENT_SECRET).getBytes(), Base64.NO_WRAP))
+                .header(AUTH_HEADER,getEncodeBasicCredentials())
                 .build();
         return http.newCall(request).execute();
+    }
 
+    public String getEncodeBasicCredentials (){
+        return "Basic "+  Base64.encodeToString(
+                (CLIENT_ID+":"+CLIENT_SECRET).getBytes(), Base64.NO_WRAP);
     }
 
 }

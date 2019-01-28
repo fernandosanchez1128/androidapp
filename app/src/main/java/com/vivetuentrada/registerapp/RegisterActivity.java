@@ -54,6 +54,7 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private Vibrator vibrator;
+    private int seconds_vibrate = 2000;//milisegundos de vibracion si ocurre un error
     private String CODE_FORMAT = "CODE_128";
     private ValidateInputTicketTask tValidateTask = null;
     private Button scanBtn, registerBtn, logoutBtn;
@@ -259,11 +260,12 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
         protected void onPostExecute(final Integer resp) {
             showProgress(false);
             tValidateTask = null;
+            FragmentManager fragment = getFragmentManager();
             if (resp == 200) {
-                FragmentManager fragment = getFragmentManager();
                 responseTxt.setTextColor(Color.RED);
                 codeInfo.setText(lastCode);
                 if (serverResp.hasError()) {
+                    vibrator.vibrate(seconds_vibrate);
                     ServerResponse.Error firstError = (ServerResponse.Error) serverResp.getErrorsList().get(0);
                     String error = MessagesHelper.registerErrors(firstError.getCode(), getBaseContext());
                     responseTxt.setText(error);
@@ -280,7 +282,7 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
                         responseTxt.setTextColor(Color.BLUE);
                         responseTxt.setText(msg);
                     }else{
-                        r
+                        vibrator.vibrate(seconds_vibrate);
                         responseTxt.setText(msg);
                         ALERT.setMESSAGE(msg);
                         ALERT.show(fragment,"");
@@ -288,7 +290,11 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
 
                 }
             } else {
-                responseTxt.setText(MessagesHelper.HttpErrorsMessage(resp, getBaseContext()));
+                vibrator.vibrate(seconds_vibrate);
+                String error = MessagesHelper.HttpErrorsMessage(resp, getBaseContext());
+                responseTxt.setText(error);
+                ALERT.setMESSAGE(error);
+                ALERT.show(fragment,"");
             }
         }
         @Override
