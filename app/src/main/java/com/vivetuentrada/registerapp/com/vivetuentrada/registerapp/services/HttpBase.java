@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 
 /**
@@ -14,12 +16,14 @@ import okhttp3.OkHttpClient;
 public class HttpBase  extends Service{
 
 
-    private  String GATEWAY_URL = "http://liveyourportal.com/";
+    private   String GATEWAY_URL = "http://liveyourportal.com/";
     protected String SERVICE_PREFIX = "auth/";
     protected String ROOT = null;
 
-    OkHttpClient http = new OkHttpClient();
-
+    OkHttpClient http = new OkHttpClient.Builder()
+            .connectTimeout(4, TimeUnit.SECONDS)
+            .readTimeout(40,TimeUnit.SECONDS)
+            .build();
 
 
     protected String getUrlFor (String endpoint) {

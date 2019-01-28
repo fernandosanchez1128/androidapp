@@ -237,8 +237,7 @@ public class LoginActivity extends AppCompatActivity {
                 return resp.code();
 
 
-            } catch (IOException e) {
-                Log.d("error",e.getMessage());
+            } catch (Exception e) {
                 return 500;
             }
 
