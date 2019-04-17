@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DialogTitle;
@@ -36,7 +37,7 @@ public class DialogAlert extends DialogFragment {
 
        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         TextView title = new TextView(getActivity());
-        title.setTextColor(Color.BLACK);
+        title.setTextColor(Color.YELLOW);
         title.setTextSize(22);
         title.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
         title.setPadding(70,40,0,0);
@@ -57,27 +58,25 @@ public class DialogAlert extends DialogFragment {
 
 
        final Dialog dialog = builder.create();
-       dialog.setCancelable(false);
-       //dialog.setCanceledOnTouchOutside(false);
+       dialog.getWindow().setBackgroundDrawableResource(android.R.color.holo_red_dark);
+        //dialog.setCanceledOnTouchOutside(false);
 
        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
            @Override
            public void onShow(final DialogInterface dialogInterface) {
                final Button button = ((AlertDialog) dialogInterface).getButton(AlertDialog.BUTTON_POSITIVE);
+               button.setBackgroundColor(Color.WHITE);
+               button.setTextColor(Color.BLACK);
                button.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                    @Override
                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
                    return true;
                    }
 
                });
-
                TextView textView = ((TextView) dialog.findViewById(android.R.id.message));
-               textView.setTextColor(Color.RED);
-
+               textView.setTextColor(Color.WHITE);
                textView.setTextSize(22);
-
            }
        });
 

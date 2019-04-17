@@ -22,6 +22,8 @@ public class AuthService extends HttpBase {
     private String CLIENT_ID = "vive_register_app";
     private String CLIENT_SECRET = "^9QW%riJ7[";
     private String AUTH_HEADER = "Authorization";
+    private String GRANT_TYPE = "grant_type";
+    private String GRANT = "password";
     private SessionStorageService _session = SessionStorageService.getInstance(null);
 
     public AuthService (){
@@ -36,6 +38,7 @@ public class AuthService extends HttpBase {
         RequestBody formBody = new FormBody.Builder()
                 .add("username", username)
                 .add("password", password)
+                .add(GRANT_TYPE,GRANT)
                 .build();
         Request request = new Request.Builder()
                 .url(this.getUrlFor())

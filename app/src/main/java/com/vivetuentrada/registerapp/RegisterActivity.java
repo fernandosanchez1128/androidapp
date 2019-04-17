@@ -54,7 +54,8 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private Vibrator vibrator;
-    private int seconds_vibrate = 2000;//milisegundos de vibracion si ocurre un error
+    private int good_vibrate = 1000;//milisegundos de vibracion si ocurre un error
+    private int wrong_vibrate = 5000;//milisegundos de vibracion si ocurre un error
     private String CODE_FORMAT = "CODE_128";
     private ValidateInputTicketTask tValidateTask = null;
     private Button scanBtn, registerBtn, logoutBtn;
@@ -265,7 +266,7 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
                 responseTxt.setTextColor(Color.RED);
                 codeInfo.setText(lastCode);
                 if (serverResp.hasError()) {
-                    vibrator.vibrate(seconds_vibrate);
+                    vibrator.vibrate(wrong_vibrate);
                     ServerResponse.Error firstError = (ServerResponse.Error) serverResp.getErrorsList().get(0);
                     String error = MessagesHelper.registerErrors(firstError.getCode(), getBaseContext());
                     responseTxt.setText(error);
@@ -279,10 +280,11 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
                     String str_status = status.getStatus();
                     String msg = MessagesHelper.registerMessages(status.getMessage(),status.getArgs(),getBaseContext());
                     if (str_status.equals("accept")){
+                        vibrator.vibrate(good_vibrate);
                         responseTxt.setTextColor(Color.BLUE);
                         responseTxt.setText(msg);
                     }else{
-                        vibrator.vibrate(seconds_vibrate);
+                        vibrator.vibrate(wrong_vibrate);
                         responseTxt.setText(msg);
                         ALERT.setMESSAGE(msg);
                         ALERT.show(fragment,"");
@@ -290,7 +292,7 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
 
                 }
             } else {
-                vibrator.vibrate(seconds_vibrate);
+                vibrator.vibrate(wrong_vibrate);
                 String error = MessagesHelper.HttpErrorsMessage(resp, getBaseContext());
                 responseTxt.setText(error);
                 ALERT.setMESSAGE(error);
@@ -316,6 +318,8 @@ public class RegisterActivity  extends AppCompatActivity  implements View.OnClic
                 Intent loginActivity = new Intent(RegisterActivity.this,LoginActivity.class);
                 startActivity(loginActivity);
             } catch (IOException e) {
+                e.printStackTrace();
+            }catch (Exception e) {
                 e.printStackTrace();
             }
             return null;

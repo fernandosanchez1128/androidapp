@@ -16,7 +16,7 @@ import okhttp3.OkHttpClient;
 public class HttpBase  extends Service{
 
 
-    private   String GATEWAY_URL = "http://liveyourportal.com/";
+    private   String GATEWAY_URL = "https://liveyourportal.com/";
     protected String SERVICE_PREFIX = "auth/";
     protected String ROOT = null;
 
